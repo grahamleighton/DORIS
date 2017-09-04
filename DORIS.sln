@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DORIS", "DORIS\DORIS.csproj", "{82228B7C-C7EA-441A-9903-079540EC6210}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DORIS.Tests", "DORIS.Tests\DORIS.Tests.csproj", "{A557843E-2DB5-4A72-BF04-1FBE21B30A4C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{82228B7C-C7EA-441A-9903-079540EC6210}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82228B7C-C7EA-441A-9903-079540EC6210}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82228B7C-C7EA-441A-9903-079540EC6210}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82228B7C-C7EA-441A-9903-079540EC6210}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A557843E-2DB5-4A72-BF04-1FBE21B30A4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A557843E-2DB5-4A72-BF04-1FBE21B30A4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A557843E-2DB5-4A72-BF04-1FBE21B30A4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A557843E-2DB5-4A72-BF04-1FBE21B30A4C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
