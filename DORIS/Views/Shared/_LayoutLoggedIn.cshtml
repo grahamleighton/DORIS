@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - DORIS</title>
+   
+    
+ 
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+   
+    <style type="text/css">
+        .navbar-default .navbar-brand {
+            background-color: cornflowerblue;
+            border-color: #E7E7E7;
+            color: white;
+        }
+
+        .navbar-default .navbar-text {
+            background-color: cornflowerblue;
+            border-color: #E7E7E7;
+            color: white;
+        }
+
+        .navbar-collapse {
+            background-color: cornflowerblue;
+            color: white;
+        }
+
+            .navbar-collapse li a {
+                background-color: cornflowerblue;
+                color: white;
+            }
+
+            .navbar-collapse .navbar-nav li a {
+                background-color: cornflowerblue;
+                color: white;
+            }
+
+        .navbar-fixed-top {
+            background-color: cornflowerblue;
+        }
+
+        .navbar-fixed-bottom {
+            background-color: cornflowerblue;
+        }
+        .navbar-fixed-bottom {
+  background-color: cornflowerblue;
+  font-size : 18px;
+}
+    </style> 
+</head>
+<body>
+    <div class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("DORIS", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="#">Messages <span class="label label-success">3</span></a></li>
+                 
+                </ul>
+               
+            </div>
+        </div>
+    </div>
+    <div class="navbar navbar-default navbar-fixed-bottom">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+            </div>
+            <div class="navbar-collapse collapse">
+
+                <p class="navbar-text navbar-left">@Html.Raw(ViewBag.FullName)</p>
+
+                <p class="navbar-text navbar-right">@Html.Raw(ViewBag.SupplierCode) - @Html.Raw(ViewBag.SupplierName)</p>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - DORIS</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+
+</body>
+</html>

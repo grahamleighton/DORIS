@@ -1,0 +1,40 @@
+﻿
+@model IEnumerable<DORIS.Models.tp_getSummary_Result>
+
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<h2>Index</h2>
+
+
+<table class="table table-condensed table-responsive">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.UserStatusText)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Records)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserStatusText)
+            </td>
+            <td>
+                @Html.ActionLink(String.Format("{0}", item.Records), "Display", new { OS = item.OrderStatusCode })
+            </td>
+        </tr>
+    }
+
+
+
+
+</table>
+
+

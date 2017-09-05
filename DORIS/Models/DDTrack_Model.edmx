@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="DDTrack_SandBoxModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Password" Type="varchar" MaxLength="50" />
+          <Property Name="UID" Type="varchar" MaxLength="36" />
+          <Property Name="CreatedOn" Type="datetime" />
+          <Property Name="SupplierCode" Type="varchar" MaxLength="4" />
+          <Property Name="FullName" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <Function Name="getOrderStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="SupplierCode" Type="varchar" Mode="In" />
+          <Parameter Name="OrderStatus" Type="varchar" Mode="In" />
+          <Parameter Name="Count" Type="int" Mode="InOut" />
+          <Parameter Name="ReturnCode" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="getUserDetails" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="HashValue" Type="varchar" Mode="In" />
+          <Parameter Name="ValidUser" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="loginUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="varchar" Mode="In" />
+          <Parameter Name="password" Type="varchar" Mode="In" />
+          <Parameter Name="Supplier" Type="varchar" Mode="In" />
+          <Parameter Name="token" Type="varchar" Mode="InOut" />
+        </Function>
+        <Function Name="tp_getSummary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="SupplierCode" Type="varchar" Mode="In" />
+        </Function>
+        <EntityContainer Name="DDTrack_SandBoxModelStoreContainer">
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="DDTrack_SandBoxModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UID" Type="String" MaxLength="36" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
+          <Property Name="SupplierCode" Type="String" MaxLength="4" FixedLength="false" Unicode="false" />
+          <Property Name="FullName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityContainer Name="DDTrack_SandBoxEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <FunctionImport Name="loginUser">
+            <Parameter Name="userID" Mode="In" Type="String" />
+            <Parameter Name="password" Mode="In" Type="String" />
+            <Parameter Name="Supplier" Mode="In" Type="String" />
+            <Parameter Name="token" Mode="InOut" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="tp_getSummary" ReturnType="Collection(DDTrack_SandBoxModel.tp_getSummary_Result)">
+          <Parameter Name="SupplierCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="getOrderStatus" ReturnType="Collection(DDTrack_SandBoxModel.getOrderStatus_Result)">
+            <Parameter Name="SupplierCode" Mode="In" Type="String" />
+            <Parameter Name="OrderStatus" Mode="In" Type="String" />
+            <Parameter Name="Count" Mode="InOut" Type="Int32" />
+            <Parameter Name="ReturnCode" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="getUserDetails" ReturnType="Collection(DDTrack_SandBoxModel.getUserDetails_Result)">
+          <Parameter Name="HashValue" Mode="In" Type="String" />
+            <Parameter Name="ValidUser" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="tp_getSummary_Result">
+          <Property Type="String" Name="UserStatusText" Nullable="true" MaxLength="150" />
+          <Property Type="Int32" Name="Records" Nullable="true" />
+          <Property Type="String" Name="OrderStatusCode" Nullable="true" MaxLength="2" />
+        </ComplexType>
+        <ComplexType Name="getOrderStatus_Result">
+          <Property Type="String" Name="AccountNumber" Nullable="false" MaxLength="20" />
+          <Property Type="String" Name="CustomerName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="SupplierCode" Nullable="false" MaxLength="4" />
+          <Property Type="String" Name="ItemNumber" Nullable="false" MaxLength="10" />
+          <Property Type="String" Name="ItemDescription" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="OptionNumber" Nullable="false" MaxLength="2" />
+          <Property Type="String" Name="OptionDescription" Nullable="true" MaxLength="10" />
+          <Property Type="DateTime" Name="StatusTime" Nullable="false" Precision="23" />
+          <Property Type="String" Name="UserStatusText" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="InvoiceNumber" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="OrderStatusCode" Nullable="true" MaxLength="2" />
+          <Property Type="Int64" Name="OrderID" Nullable="false" />
+          <Property Type="Int32" Name="DisplayOrder" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="getUserDetails_Result">
+          <Property Type="String" Name="UserName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="SupplierCode" Nullable="true" MaxLength="4" />
+          <Property Type="String" Name="FullName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="SupplierName" Nullable="true" MaxLength="150" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="DDTrack_SandBoxModelStoreContainer" CdmEntityContainer="DDTrack_SandBoxEntities">
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="DDTrack_SandBoxModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="SupplierCode" ColumnName="SupplierCode" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="UID" ColumnName="UID" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="loginUser" FunctionName="DDTrack_SandBoxModel.Store.loginUser" />
+          <FunctionImportMapping FunctionImportName="tp_getSummary" FunctionName="DDTrack_SandBoxModel.Store.tp_getSummary">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DDTrack_SandBoxModel.tp_getSummary_Result">
+                <ScalarProperty Name="UserStatusText" ColumnName="UserStatusText" />
+                <ScalarProperty Name="Records" ColumnName="Records" />
+                <ScalarProperty Name="OrderStatusCode" ColumnName="OrderStatusCode" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="getOrderStatus" FunctionName="DDTrack_SandBoxModel.Store.getOrderStatus">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DDTrack_SandBoxModel.getOrderStatus_Result">
+                <ScalarProperty Name="AccountNumber" ColumnName="AccountNumber" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="SupplierCode" ColumnName="SupplierCode" />
+                <ScalarProperty Name="ItemNumber" ColumnName="ItemNumber" />
+                <ScalarProperty Name="ItemDescription" ColumnName="ItemDescription" />
+                <ScalarProperty Name="OptionNumber" ColumnName="OptionNumber" />
+                <ScalarProperty Name="OptionDescription" ColumnName="OptionDescription" />
+                <ScalarProperty Name="StatusTime" ColumnName="StatusTime" />
+                <ScalarProperty Name="UserStatusText" ColumnName="UserStatusText" />
+                <ScalarProperty Name="InvoiceNumber" ColumnName="InvoiceNumber" />
+                <ScalarProperty Name="OrderStatusCode" ColumnName="OrderStatusCode" />
+                <ScalarProperty Name="OrderID" ColumnName="OrderID" />
+                <ScalarProperty Name="DisplayOrder" ColumnName="DisplayOrder" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="getUserDetails" FunctionName="DDTrack_SandBoxModel.Store.getUserDetails">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DDTrack_SandBoxModel.getUserDetails_Result">
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="SupplierCode" ColumnName="SupplierCode" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="SupplierName" ColumnName="SupplierName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
