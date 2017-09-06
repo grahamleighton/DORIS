@@ -17,6 +17,12 @@
           <Property Name="SupplierCode" Type="varchar" MaxLength="4" />
           <Property Name="FullName" Type="varchar" MaxLength="50" />
         </EntityType>
+        <Function Name="createSuperUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CurrentUserID" Type="int" Mode="In" />
+          <Parameter Name="UserName" Type="varchar" Mode="In" />
+          <Parameter Name="RC" Type="int" Mode="InOut" />
+          <Parameter Name="ErrorMessage" Type="varchar(max)" Mode="InOut" />
+        </Function>
         <Function Name="getOrderStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="SupplierCode" Type="varchar" Mode="In" />
           <Parameter Name="OrderStatus" Type="varchar" Mode="In" />
@@ -33,8 +39,35 @@
           <Parameter Name="Supplier" Type="varchar" Mode="In" />
           <Parameter Name="token" Type="varchar" Mode="InOut" />
         </Function>
+        <Function Name="setPassword" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="bigint" Mode="In" />
+          <Parameter Name="Password" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="tp_getSummary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="SupplierCode" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usr_addUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="bigint" Mode="In" />
+          <Parameter Name="UserName" Type="varchar" Mode="In" />
+          <Parameter Name="SupplierCode" Type="varchar" Mode="In" />
+          <Parameter Name="FullName" Type="varchar" Mode="In" />
+          <Parameter Name="RC" Type="int" Mode="InOut" />
+          <Parameter Name="ErrorMessage" Type="varchar(max)" Mode="InOut" />
+        </Function>
+        <Function Name="usr_getUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="usr_getUsers" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="usr_updateUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CurrentUserID" Type="int" Mode="In" />
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="UserName" Type="varchar" Mode="In" />
+          <Parameter Name="SupplierCode" Type="varchar" Mode="In" />
+          <Parameter Name="FullName" Type="varchar" Mode="In" />
+          <Parameter Name="RC" Type="int" Mode="InOut" />
+          <Parameter Name="ErrorMessage" Type="varchar(max)" Mode="InOut" />
         </Function>
         <EntityContainer Name="DDTrack_SandBoxModelStoreContainer">
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
@@ -73,8 +106,41 @@
             <Parameter Name="ReturnCode" Mode="InOut" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="getUserDetails" ReturnType="Collection(DDTrack_SandBoxModel.getUserDetails_Result)">
-          <Parameter Name="HashValue" Mode="In" Type="String" />
+            <Parameter Name="HashValue" Mode="In" Type="String" />
             <Parameter Name="ValidUser" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="createSuperUser">
+            <Parameter Name="CurrentUserID" Mode="In" Type="Int32" />
+            <Parameter Name="UserName" Mode="In" Type="String" />
+            <Parameter Name="RC" Mode="InOut" Type="Int32" />
+            <Parameter Name="ErrorMessage" Mode="InOut" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="usr_addUser">
+            <Parameter Name="UserID" Mode="In" Type="Int64" />
+            <Parameter Name="UserName" Mode="In" Type="String" />
+            <Parameter Name="SupplierCode" Mode="In" Type="String" />
+            <Parameter Name="FullName" Mode="In" Type="String" />
+            <Parameter Name="RC" Mode="InOut" Type="Int32" />
+            <Parameter Name="ErrorMessage" Mode="InOut" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="usr_getUser" ReturnType="Collection(DDTrack_SandBoxModel.usr_getUser_Result)">
+          <Parameter Name="UserID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="usr_getUsers" ReturnType="Collection(DDTrack_SandBoxModel.usr_getUsers_Result)">
+          <Parameter Name="UserID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="usr_updateUser">
+            <Parameter Name="CurrentUserID" Mode="In" Type="Int32" />
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="UserName" Mode="In" Type="String" />
+            <Parameter Name="SupplierCode" Mode="In" Type="String" />
+            <Parameter Name="FullName" Mode="In" Type="String" />
+            <Parameter Name="RC" Mode="InOut" Type="Int32" />
+            <Parameter Name="ErrorMessage" Mode="InOut" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="setPassword">
+            <Parameter Name="UserID" Mode="In" Type="Int64" />
+            <Parameter Name="Password" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <ComplexType Name="tp_getSummary_Result">
@@ -102,6 +168,25 @@
           <Property Type="String" Name="SupplierCode" Nullable="true" MaxLength="4" />
           <Property Type="String" Name="FullName" Nullable="true" MaxLength="50" />
           <Property Type="String" Name="SupplierName" Nullable="true" MaxLength="150" />
+          <Property Type="Int64" Name="UserID" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="usr_getUser_Result">
+          <Property Type="Int64" Name="UserID" Nullable="false" />
+          <Property Type="String" Name="UserName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Password" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="UID" Nullable="true" MaxLength="36" />
+          <Property Type="DateTime" Name="CreatedOn" Nullable="true" Precision="23" />
+          <Property Type="String" Name="SupplierCode" Nullable="true" MaxLength="4" />
+          <Property Type="String" Name="FullName" Nullable="true" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="usr_getUsers_Result">
+          <Property Type="Int64" Name="UserID" Nullable="false" />
+          <Property Type="String" Name="UserName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Password" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="UID" Nullable="true" MaxLength="36" />
+          <Property Type="DateTime" Name="CreatedOn" Nullable="true" Precision="23" />
+          <Property Type="String" Name="SupplierCode" Nullable="true" MaxLength="4" />
+          <Property Type="String" Name="FullName" Nullable="true" MaxLength="50" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -158,9 +243,40 @@
                 <ScalarProperty Name="SupplierCode" ColumnName="SupplierCode" />
                 <ScalarProperty Name="FullName" ColumnName="FullName" />
                 <ScalarProperty Name="SupplierName" ColumnName="SupplierName" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="createSuperUser" FunctionName="DDTrack_SandBoxModel.Store.createSuperUser" />
+          <FunctionImportMapping FunctionImportName="usr_addUser" FunctionName="DDTrack_SandBoxModel.Store.usr_addUser" />
+          <FunctionImportMapping FunctionImportName="usr_getUser" FunctionName="DDTrack_SandBoxModel.Store.usr_getUser">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DDTrack_SandBoxModel.usr_getUser_Result">
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="UID" ColumnName="UID" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="SupplierCode" ColumnName="SupplierCode" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="usr_getUsers" FunctionName="DDTrack_SandBoxModel.Store.usr_getUsers">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DDTrack_SandBoxModel.usr_getUsers_Result">
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="UID" ColumnName="UID" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="SupplierCode" ColumnName="SupplierCode" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="usr_updateUser" FunctionName="DDTrack_SandBoxModel.Store.usr_updateUser" />
+          <FunctionImportMapping FunctionImportName="setPassword" FunctionName="DDTrack_SandBoxModel.Store.setPassword" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

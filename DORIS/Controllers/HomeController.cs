@@ -10,7 +10,7 @@ namespace DORIS.Controllers
     {
         public ActionResult Index()
         {
-            return RedirectToAction("Login", "Users");
+            return RedirectToAction("Login", "Login");
 
             return View();
         }

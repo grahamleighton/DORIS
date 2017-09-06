@@ -76,5 +76,95 @@ namespace DORIS.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<getUserDetails_Result>("getUserDetails", hashValueParameter, validUser);
         }
+    
+        public virtual int createSuperUser(Nullable<int> currentUserID, string userName, ObjectParameter rC, ObjectParameter errorMessage)
+        {
+            var currentUserIDParameter = currentUserID.HasValue ?
+                new ObjectParameter("CurrentUserID", currentUserID) :
+                new ObjectParameter("CurrentUserID", typeof(int));
+    
+            var userNameParameter = userName != null ?
+                new ObjectParameter("UserName", userName) :
+                new ObjectParameter("UserName", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("createSuperUser", currentUserIDParameter, userNameParameter, rC, errorMessage);
+        }
+    
+        public virtual int usr_addUser(Nullable<long> userID, string userName, string supplierCode, string fullName, ObjectParameter rC, ObjectParameter errorMessage)
+        {
+            var userIDParameter = userID.HasValue ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(long));
+    
+            var userNameParameter = userName != null ?
+                new ObjectParameter("UserName", userName) :
+                new ObjectParameter("UserName", typeof(string));
+    
+            var supplierCodeParameter = supplierCode != null ?
+                new ObjectParameter("SupplierCode", supplierCode) :
+                new ObjectParameter("SupplierCode", typeof(string));
+    
+            var fullNameParameter = fullName != null ?
+                new ObjectParameter("FullName", fullName) :
+                new ObjectParameter("FullName", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("usr_addUser", userIDParameter, userNameParameter, supplierCodeParameter, fullNameParameter, rC, errorMessage);
+        }
+    
+        public virtual ObjectResult<usr_getUser_Result> usr_getUser(Nullable<long> userID)
+        {
+            var userIDParameter = userID.HasValue ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<usr_getUser_Result>("usr_getUser", userIDParameter);
+        }
+    
+        public virtual ObjectResult<usr_getUsers_Result> usr_getUsers(Nullable<long> userID)
+        {
+            var userIDParameter = userID.HasValue ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<usr_getUsers_Result>("usr_getUsers", userIDParameter);
+        }
+    
+        public virtual int usr_updateUser(Nullable<int> currentUserID, Nullable<int> userID, string userName, string supplierCode, string fullName, ObjectParameter rC, ObjectParameter errorMessage)
+        {
+            var currentUserIDParameter = currentUserID.HasValue ?
+                new ObjectParameter("CurrentUserID", currentUserID) :
+                new ObjectParameter("CurrentUserID", typeof(int));
+    
+            var userIDParameter = userID.HasValue ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(int));
+    
+            var userNameParameter = userName != null ?
+                new ObjectParameter("UserName", userName) :
+                new ObjectParameter("UserName", typeof(string));
+    
+            var supplierCodeParameter = supplierCode != null ?
+                new ObjectParameter("SupplierCode", supplierCode) :
+                new ObjectParameter("SupplierCode", typeof(string));
+    
+            var fullNameParameter = fullName != null ?
+                new ObjectParameter("FullName", fullName) :
+                new ObjectParameter("FullName", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("usr_updateUser", currentUserIDParameter, userIDParameter, userNameParameter, supplierCodeParameter, fullNameParameter, rC, errorMessage);
+        }
+    
+        public virtual int setPassword(Nullable<long> userID, string password)
+        {
+            var userIDParameter = userID.HasValue ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(long));
+    
+            var passwordParameter = password != null ?
+                new ObjectParameter("Password", password) :
+                new ObjectParameter("Password", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("setPassword", userIDParameter, passwordParameter);
+        }
     }
 }

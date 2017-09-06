@@ -7,95 +7,79 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using DORIS.Models;
-using System.Data.SqlClient;
-using System.Data.Sql;
-
 
 namespace DORIS.Controllers
 {
-    public class UsersController : Controller
+    public class UserController : Controller
     {
         private DDTrack_SandBoxEntities db = new DDTrack_SandBoxEntities();
+        private static UserDetail UserInfo = new UserDetail();
 
-        // GET: Users
+        // GET: User
         public ActionResult Index()
         {
-            return View(db.Users.ToList());
+            UserInfo.Import((UserDetail)(Session["userinfo"]));
+
+            var userlist = db.usr_getUsers(UserInfo.getUserID());
+
+            ViewBag.UserMessage = TempData["usermessage"];
+            return View(userlist.ToList());
         }
 
-        // GET: Users/Details/5
+        public ActionResult Reset( long? UserID)
+        {
+            if (UserID == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            db.setPassword(UserID, "monkey");
+            
+            return RedirectToAction("Details", "User", new { id = UserID });
+           
+            
+
+        }
+        // GET: User/Details/5
         public ActionResult Details(long? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            User user = db.Users.Find(id);
+            usr_getUser_Result user = db.usr_getUser(id).Single();
             if (user == null)
             {
                 return HttpNotFound();
             }
             return View(user);
         }
-        public ActionResult Login()
-        {
-            return View();
-        }
-        // POST: Users/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Login(string UserName , string Password,string SupplierCode)
-        {
-            ViewBag.UN = UserName;
-            ViewBag.PW = Password;
-            ViewBag.SC = SupplierCode;
 
-           
-            System.Data.Entity.Core.Objects.ObjectParameter hashValue = new System.Data.Entity.Core.Objects.ObjectParameter("token", typeof(string));
-
-
-            int rc = db.loginUser(UserName, Password, SupplierCode, hashValue);
-
-            ViewBag.Hash = hashValue.Value;    
-
-            if ( ViewBag.Hash != "0" )
-            {
-                return RedirectToAction("index", "Order", new { H = hashValue.Value } );  
-            }
-
-            return View();
-        }
-
-
-
-
-
-        // GET: Users/Create
+        // GET: User/Create
         public ActionResult Create()
         {
+            ViewBag.DefaultSupplier = UserInfo.getSupplierCode();
             return View();
         }
 
-        // POST: Users/Create
+        // POST: User/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "UserID,UserName,Password,UID,CreatedOn")] User user)
+        public ActionResult Create(string UserName, string SupplierCode, string FullName)
         {
-            if (ModelState.IsValid)
-            {
-                db.Users.Add(user);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+            System.Data.Entity.Core.Objects.ObjectParameter rc = new System.Data.Entity.Core.Objects.ObjectParameter("rC", typeof(int));
+            System.Data.Entity.Core.Objects.ObjectParameter errormessage = new System.Data.Entity.Core.Objects.ObjectParameter("errorMessage", typeof(string));
 
-            return View(user);
+            db.usr_addUser(UserInfo.getUserID(), UserName, SupplierCode, FullName, rc,errormessage);
+
+            TempData["usermessage"] = errormessage.Value;
+            return RedirectToAction("Index");
+
         }
 
-        // GET: Users/Edit/5
+        // GET: User/Edit/5
         public ActionResult Edit(long? id)
         {
             if (id == null)
@@ -107,15 +91,16 @@ namespace DORIS.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.UserName = user.UserName;
             return View(user);
         }
 
-        // POST: Users/Edit/5
+        // POST: User/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "UserID,UserName,Password,UID,CreatedOn")] User user)
+        public ActionResult Edit([Bind(Include = "UserID,UserName,Password,UID,CreatedOn,SupplierCode,FullName")] User user)
         {
             if (ModelState.IsValid)
             {
@@ -126,7 +111,7 @@ namespace DORIS.Controllers
             return View(user);
         }
 
-        // GET: Users/Delete/5
+        // GET: User/Delete/5
         public ActionResult Delete(long? id)
         {
             if (id == null)
@@ -141,7 +126,7 @@ namespace DORIS.Controllers
             return View(user);
         }
 
-        // POST: Users/Delete/5
+        // POST: User/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(long id)

@@ -10,7 +10,7 @@ using System.Data.Sql;
 
 namespace DORIS.Controllers
 {
-    public class OrderController : Controller
+    public class OrderController : Controller 
     {
         private DDTrack_SandBoxEntities db = new DDTrack_SandBoxEntities();
         private static string SupplierCode = "";
@@ -19,9 +19,9 @@ namespace DORIS.Controllers
 
         public ActionResult Summary()
         {
-            if (!UserInfo.IsValid())
+            if (!UserInfo.IsValid()  )
             {
-                return RedirectToAction("Login", "Users");
+                return RedirectToAction("Login", "Login");
             }
 
             List<tp_getSummary_Result> OrderSummary = db.tp_getSummary(UserInfo.getSupplierCode()).ToList();
@@ -44,17 +44,20 @@ namespace DORIS.Controllers
         {
             if ( H == null )
             {
-                return RedirectToAction("Login", "Users");
+                return RedirectToAction("Login", "");
             }
             string hash = H;
-            if (!UserInfo.IsValid())
+            if (!UserInfo.IsValid() || Session["userinfo"] == null )
             {
                 System.Data.Entity.Core.Objects.ObjectParameter validUser = new System.Data.Entity.Core.Objects.ObjectParameter("ValidUser", typeof(bool));
 
                 try
                 {
                     getUserDetails_Result ud = db.getUserDetails(hash, validUser).Single();
-                    UserInfo.setDetails(ud.UserName, ud.FullName, ud.SupplierCode, ud.SupplierName,hash);
+                    UserInfo.setDetails(ud.UserName, ud.FullName, ud.SupplierCode, ud.SupplierName,hash,ud.UserID );
+                  
+                    Session["userinfo"] = UserInfo.Export();
+
                 }
                 catch(Exception e)
                 {
@@ -63,7 +66,7 @@ namespace DORIS.Controllers
             }
             if ( ! UserInfo.IsValid())
             {
-                return RedirectToAction("Login", "Users");
+                return RedirectToAction("Login", "Login");
             }
 
             return RedirectToAction("Summary");
@@ -75,12 +78,12 @@ namespace DORIS.Controllers
         {
             if ( OS == null || OS.Length == 0 )
             {
-                return RedirectToAction("Login", "Users");
+                return RedirectToAction("Login", "Login");
             }
 
             if (!UserInfo.IsValid())
             {
-                return RedirectToAction("Login", "Users");
+                return RedirectToAction("Login", "Login");
             }
 
 
