@@ -20,11 +20,11 @@ namespace DORIS.Models
         public string ItemDescription { get; set; }
         public string OptionNumber { get; set; }
         public string OptionDescription { get; set; }
-        public System.DateTime StatusTime { get; set; }
+        public Nullable<System.DateTime> StatusTime { get; set; }
         public string UserStatusText { get; set; }
         public string InvoiceNumber { get; set; }
         public string OrderStatusCode { get; set; }
-        public long OrderID { get; set; }
+        public Nullable<long> OrderID { get; set; }
         public Nullable<int> DisplayOrder { get; set; }
     }
 }

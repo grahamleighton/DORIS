@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
+
 
 namespace DORIS.Models
 {
@@ -14,6 +16,8 @@ namespace DORIS.Models
         private int _initialisationvalue;
         private string _hash;
         private long _userid;
+        private int _adminlevel;
+        private string _adminlevelname;
 
 
         public string getUserName()
@@ -50,9 +54,13 @@ namespace DORIS.Models
             _username = "";
             _hash = "";
             _userid = 0;
+            _adminlevel = 0;
+            _adminlevelname = "";
+           
+
         }
 
-        public UserDetail(string UserName, string FullName, string SupplierCode, string SupplierName, string Hash,long UserID)
+        public UserDetail(string UserName, string FullName, string SupplierCode, string SupplierName, string Hash,long UserID,int AdminLevel,string AdminLevelName)
         {
             _username = UserName;
             _fullname = FullName;
@@ -61,8 +69,11 @@ namespace DORIS.Models
             _hash = Hash;
             _initialisationvalue = 23;
             _userid = UserID;
+            _adminlevelname = AdminLevelName;
+            _adminlevel = AdminLevel;
+
         }
-        public void setDetails(string UserName, string FullName, string SupplierCode, string SupplierName, string Hash,long UserID)
+        public void setDetails(string UserName, string FullName, string SupplierCode, string SupplierName, string Hash,long UserID, int AdminLevel, string AdminLevelName)
         {
             _username = UserName;
             _fullname = FullName;
@@ -71,11 +82,33 @@ namespace DORIS.Models
             _initialisationvalue = 23;
             _hash = Hash;
             _userid = UserID;
+            _adminlevelname = AdminLevelName;
+            _adminlevel = AdminLevel;
         }
 
         public bool IsValid()
         {
             return (_initialisationvalue == 23);
+        }
+        public bool IsGod()
+        {
+            return (_adminlevel == 0);
+        }
+        public bool IsSupplierAdmin()
+        {
+            return (_adminlevel == 1);
+        }
+        public bool IsUser()
+        {
+            return (_adminlevel == 2);
+        }
+        public int getAdminLevel()
+        {
+            return (_adminlevel);
+        }
+        public string getAdminLevelName()
+        {
+            return (_adminlevelname);
         }
         public UserDetail Export()
         {
@@ -87,6 +120,8 @@ namespace DORIS.Models
             n._username = this._username;
             n._initialisationvalue = this._initialisationvalue;
             n._userid = this._userid;
+            n._adminlevel = this._adminlevel;
+            n._adminlevelname = this._adminlevelname;
             return n;
 
         }
@@ -99,6 +134,8 @@ namespace DORIS.Models
             this._suppliername = ud._suppliername;
             this._username = ud._username;
             this._userid = ud._userid;
+            this._adminlevel = ud._adminlevel;
+            this._adminlevelname = ud._adminlevelname;
         }
 
     }

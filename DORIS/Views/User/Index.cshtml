@@ -11,7 +11,9 @@
 
 </div>
 <p>
+@if (ViewBag.AdminLevel < 2) { 
     @Html.ActionLink("Create New User", "Create")
+    }
 </p>
 <table class="table">
     <tr>
@@ -47,7 +49,10 @@
         </td>
        
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.UserID }) |
+           @if (ViewBag.AdminLevel < 2 || ViewBag.UserName == item.UserName)
+           {
+            @Html.ActionLink("Edit", "Edit", new { id = item.UserID }) @Html.Raw(" |")
+           }
             @Html.ActionLink("Details", "Details", new { id=item.UserID })
           
         </td>

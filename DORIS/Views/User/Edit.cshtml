@@ -1,11 +1,11 @@
-﻿@model DORIS.Models.User
+﻿@model DORIS.Models.usr_getUser_Result
 
 @{
     ViewBag.Title = "Edit";
     Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
 }
 
-<h2>Edit @ViewBag.UserName </h2>
+<h2>Edit @Html.Raw(Model.UserName) </h2>
 
 @using (Html.BeginForm())
 {
@@ -41,6 +41,76 @@
             </div>
         </div>
 
+        
+        @if (ViewBag.AdminLevel == 0)
+        {
+            <div class="form-group">
+                <div class="control-label col-md-2">
+                    <label for="UserType">Admin Level:</label>
+                </div>
+                <div class="col-md-10">
+
+                    <select class="form-control" id="UserType">
+                        @if (Model.AdminLevel == 2)
+                        {
+                            <option value="2" selected>User</option>
+                        }
+                        else
+                        {
+                            <option value="2">User</option>
+                        }
+                        @if (Model.AdminLevel == 1)
+                        {
+                            <option value="1" selected>Supplier Admin</option>
+                        }
+                        else
+                        {
+                            <option value="1">Supplier Admin</option>
+                        }
+                        @if (Model.AdminLevel == 0)
+                        {
+                            <option value="1" selected>GOD</option>
+                        }
+                        else
+                        {
+                            <option value="1">GOD</option>
+                        }
+
+                    </select>
+                </div>
+            </div>
+        }
+        @if (ViewBag.AdminLevel == 1)
+        {
+            <div class="form-group">
+                <div class="control-label col-md-2">
+                    <label for="UserType">Admin Level:</label>
+                </div>
+                <div class="col-md-10">
+
+                    <select class="form-control" id="UserType">
+                        @if (Model.AdminLevel == 2)
+                        {
+                            <option value="2" selected>User</option>
+                        }
+                        else
+                        {
+                            <option value="2">User</option>
+                        }
+                        @if (Model.AdminLevel == 1)
+                        {
+                            <option value="1" selected>Supplier Admin</option>
+                        }
+                        else
+                        {
+                            <option value="1">Supplier Admin</option>
+                        }
+
+                    </select>
+                </div>
+            </div>
+        }
+
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />
@@ -52,3 +122,6 @@
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>
+
+
+<div class="alert alert-info">My Admin Level : @ViewBag.AdminLevel  User Admin Level  @Model.AdminLevel (@Model.AdminLevelName)</div>

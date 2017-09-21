@@ -45,6 +45,15 @@
         </div>
     }
 
+@{ 
+    if (ViewBag.LoginResult != "")
+    {
+        <div class="alert alert-warning">@Html.Raw(ViewBag.LoginResult)
+</div>
+    }
+
+}
+
 
 
 

@@ -20,5 +20,8 @@ namespace DORIS.Models
         public Nullable<System.DateTime> CreatedOn { get; set; }
         public string SupplierCode { get; set; }
         public string FullName { get; set; }
+        public Nullable<System.DateTime> LastPasswordChange { get; set; }
+        public Nullable<int> AdminLevel { get; set; }
+        public string AdminLevelName { get; set; }
     }
 }

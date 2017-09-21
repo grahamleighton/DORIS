@@ -16,7 +16,7 @@
 <table class="table table-condensed table-responsive">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.UserStatusText)
+            @Html.DisplayNameFor(model => model.Order_Status)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Records)
@@ -27,10 +27,17 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.UserStatusText)
+                @Html.DisplayFor(modelItem => item.Order_Status)
             </td>
             <td>
-                @Html.ActionLink(String.Format("{0}", item.Records), "Display", new { OS = item.OrderStatusCode })
+                @if (item.Records > 0)
+                {
+                    @Html.ActionLink(String.Format("{0}", item.Records), "Display", new { OS = item.OrderStatusCode })
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.Records)
+                }
             </td>
         </tr>
     }

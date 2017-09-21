@@ -18,5 +18,7 @@ namespace DORIS.Models
         public string FullName { get; set; }
         public string SupplierName { get; set; }
         public long UserID { get; set; }
+        public Nullable<int> AdminLevel { get; set; }
+        public string AdminLevelName { get; set; }
     }
 }

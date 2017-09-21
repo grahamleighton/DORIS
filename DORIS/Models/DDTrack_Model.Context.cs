@@ -29,7 +29,7 @@ namespace DORIS.Models
     
         public virtual DbSet<User> Users { get; set; }
     
-        public virtual int loginUser(string userID, string password, string supplier, ObjectParameter token)
+        public virtual int loginUser(string userID, string password, string supplier, ObjectParameter token, string ipaddress, ObjectParameter change)
         {
             var userIDParameter = userID != null ?
                 new ObjectParameter("userID", userID) :
@@ -43,29 +43,33 @@ namespace DORIS.Models
                 new ObjectParameter("Supplier", supplier) :
                 new ObjectParameter("Supplier", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("loginUser", userIDParameter, passwordParameter, supplierParameter, token);
+            var ipaddressParameter = ipaddress != null ?
+                new ObjectParameter("ipaddress", ipaddress) :
+                new ObjectParameter("ipaddress", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("loginUser", userIDParameter, passwordParameter, supplierParameter, token, ipaddressParameter, change);
         }
     
-        public virtual ObjectResult<tp_getSummary_Result> tp_getSummary(string supplierCode)
+        public virtual ObjectResult<tp_getSummary_Result> tp_getSummary(string hash)
         {
-            var supplierCodeParameter = supplierCode != null ?
-                new ObjectParameter("SupplierCode", supplierCode) :
-                new ObjectParameter("SupplierCode", typeof(string));
+            var hashParameter = hash != null ?
+                new ObjectParameter("hash", hash) :
+                new ObjectParameter("hash", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<tp_getSummary_Result>("tp_getSummary", supplierCodeParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<tp_getSummary_Result>("tp_getSummary", hashParameter);
         }
     
-        public virtual ObjectResult<getOrderStatus_Result> getOrderStatus(string supplierCode, string orderStatus, ObjectParameter count, ObjectParameter returnCode)
+        public virtual ObjectResult<getOrderStatus_Result> getOrderStatus(string hash, string orderStatus, ObjectParameter count, ObjectParameter returnCode)
         {
-            var supplierCodeParameter = supplierCode != null ?
-                new ObjectParameter("SupplierCode", supplierCode) :
-                new ObjectParameter("SupplierCode", typeof(string));
+            var hashParameter = hash != null ?
+                new ObjectParameter("hash", hash) :
+                new ObjectParameter("hash", typeof(string));
     
             var orderStatusParameter = orderStatus != null ?
                 new ObjectParameter("OrderStatus", orderStatus) :
                 new ObjectParameter("OrderStatus", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<getOrderStatus_Result>("getOrderStatus", supplierCodeParameter, orderStatusParameter, count, returnCode);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<getOrderStatus_Result>("getOrderStatus", hashParameter, orderStatusParameter, count, returnCode);
         }
     
         public virtual ObjectResult<getUserDetails_Result> getUserDetails(string hashValue, ObjectParameter validUser)
@@ -165,6 +169,32 @@ namespace DORIS.Models
                 new ObjectParameter("Password", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("setPassword", userIDParameter, passwordParameter);
+        }
+    
+        public virtual int tp_updateOrder(string hash, Nullable<long> orderID)
+        {
+            var hashParameter = hash != null ?
+                new ObjectParameter("hash", hash) :
+                new ObjectParameter("hash", typeof(string));
+    
+            var orderIDParameter = orderID.HasValue ?
+                new ObjectParameter("OrderID", orderID) :
+                new ObjectParameter("OrderID", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("tp_updateOrder", hashParameter, orderIDParameter);
+        }
+    
+        public virtual int tp_BackoutOrder(string hash, Nullable<long> orderID)
+        {
+            var hashParameter = hash != null ?
+                new ObjectParameter("hash", hash) :
+                new ObjectParameter("hash", typeof(string));
+    
+            var orderIDParameter = orderID.HasValue ?
+                new ObjectParameter("OrderID", orderID) :
+                new ObjectParameter("OrderID", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("tp_BackoutOrder", hashParameter, orderIDParameter);
         }
     }
 }

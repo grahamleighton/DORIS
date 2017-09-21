@@ -13,8 +13,8 @@ namespace DORIS.Models
     
     public partial class tp_getSummary_Result
     {
-        public string UserStatusText { get; set; }
         public Nullable<int> Records { get; set; }
         public string OrderStatusCode { get; set; }
+        public string Order_Status { get; set; }
     }
 }

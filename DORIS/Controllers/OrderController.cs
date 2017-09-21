@@ -24,7 +24,7 @@ namespace DORIS.Controllers
                 return RedirectToAction("Login", "Login");
             }
 
-            List<tp_getSummary_Result> OrderSummary = db.tp_getSummary(UserInfo.getSupplierCode()).ToList();
+            List<tp_getSummary_Result> OrderSummary = db.tp_getSummary(UserInfo.getHash()).ToList();
 
 
 
@@ -47,15 +47,15 @@ namespace DORIS.Controllers
                 return RedirectToAction("Login", "");
             }
             string hash = H;
-            if (!UserInfo.IsValid() || Session["userinfo"] == null )
+            if (!UserInfo.IsValid() || Session["userinfo"] == null || UserInfo.getHash() != H )
             {
                 System.Data.Entity.Core.Objects.ObjectParameter validUser = new System.Data.Entity.Core.Objects.ObjectParameter("ValidUser", typeof(bool));
 
                 try
                 {
                     getUserDetails_Result ud = db.getUserDetails(hash, validUser).Single();
-                    UserInfo.setDetails(ud.UserName, ud.FullName, ud.SupplierCode, ud.SupplierName,hash,ud.UserID );
-                  
+                    UserInfo.setDetails(ud.UserName, ud.FullName, ud.SupplierCode, ud.SupplierName,hash,ud.UserID, (int)ud.AdminLevel, ud.AdminLevelName);
+
                     Session["userinfo"] = UserInfo.Export();
 
                 }
@@ -76,6 +76,13 @@ namespace DORIS.Controllers
 
         public ActionResult Display(string OS)
         {
+            if ( OS == null)
+            {
+                if ( !String.IsNullOrEmpty((string)TempData["OS"]) )
+                {
+                    OS = (string)TempData["OS"];
+                }
+            }
             if ( OS == null || OS.Length == 0 )
             {
                 return RedirectToAction("Login", "Login");
@@ -93,7 +100,7 @@ namespace DORIS.Controllers
             System.Data.Entity.Core.Objects.ObjectParameter ct = new System.Data.Entity.Core.Objects.ObjectParameter("Count", typeof(int));
 
 
-            List<getOrderStatus_Result> res = db.getOrderStatus(UserInfo.getSupplierCode(), OS, ct, rc).ToList();
+            List<getOrderStatus_Result> res = db.getOrderStatus(UserInfo.getHash(), OS, ct, rc).ToList();
             if ( res.Count() > 0 )
             {
                 ViewBag.OrderStatus = res.First().UserStatusText;
@@ -105,10 +112,45 @@ namespace DORIS.Controllers
             ViewBag.SupplierName = UserInfo.getSupplierName();
             ViewBag.UserName = UserInfo.getUserName();
             ViewBag.FullName = UserInfo.getFullName();
+            TempData["OS"] = OS;
 
 
             return View(res);
 
+        }
+        [HttpGet]
+        public ActionResult Update(int? id)
+        {
+            ViewBag.OrderID = id;
+
+            db.tp_updateOrder(UserInfo.getHash(), id);
+
+            return RedirectToAction("Summary");
+
+        }
+
+        [HttpGet]
+        public ActionResult Backout(int? id)
+        {
+            ViewBag.OrderID = id;
+
+            db.tp_BackoutOrder(UserInfo.getHash(), id);
+
+            return RedirectToAction("Summary");
+
+        }
+
+        public void assignViewBagDefaults()
+        {
+            if (UserInfo != null)
+            {
+                ViewBag.SupplierCode = UserInfo.getSupplierCode();
+                ViewBag.SupplierName = UserInfo.getSupplierName();
+                ViewBag.UserName = UserInfo.getUserName();
+                ViewBag.FullName = UserInfo.getFullName();
+                ViewBag.Hash = UserInfo.getHash();
+
+            }
         }
     }
 }

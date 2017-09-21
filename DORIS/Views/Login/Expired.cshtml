@@ -1,0 +1,41 @@
+﻿
+
+@{
+    ViewBag.Title = "Password Expired";
+    Layout = "~/Views/Shared/_LayoutLoggedIn.cshtml";
+}
+
+<h2>Password Expired For @Html.Raw(ViewBag.UserName)</h2>
+
+
+@using (Html.BeginForm("Expired","Login",FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+
+        <hr />
+        
+        <div class="form-group">
+            <label for="password">Enter New Password : </label>
+            <input type="password" class="form-control" id="password" name="password" />
+        </div>
+        <div class="form-group">
+            <label for="password2">Confirm Password : </label>
+            <input type="password" class="form-control" id="password2" name="password2" />
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Change" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+
+    
+}
+
+@if (ViewBag.ExpiredMessage != null && ViewBag.ExpiredMessage != "")
+{
+    <div class="alert alert-warning">@Html.Raw(ViewBag.ExpiredMessage)</div>
+}

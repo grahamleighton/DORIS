@@ -50,18 +50,88 @@
                     text: 'Process',
 
                     action: function (e, dt , button , config ) {
-                        alert(dt.rows({ selected: true }).indexes().length + ' row(s) selected');
-                        var rowData = dt.rows({ selected: true }).data();
+                   //     alert(dt.rows({ selected: true }).indexes().length + ' row(s) selected');
+                        var rowData = dt.rows({ selected: true, page: 'current' }).data();
 
                         $.each($(rowData), function (key, value) {
                             console.log(value);
-                            alert(value[0]);
+                            var url = "Update/" + value[0];
+                            var method = "PUT";
+                            var postData = value[0];
+                            var async = false;
+
+                            console.log(url);
+
+                            var xmlHttp = new XMLHttpRequest();
+                            xmlHttp.onreadystatechange = function () {
+                                if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                                    //   callback(xmlHttp.responseText);
+                                ;
+                            }
+                            xmlHttp.open("GET", url, true); // true for asynchronous 
+                            xmlHttp.send(null);
+                        //    location.reload();
+
                         });
                         }
                 },
                 'selectedSingle',
-                'selectAll',
-                'selectNone'
+                
+                   {
+                       extend: 'selectAll',
+                       className: 'selectall',
+                       action : function(e) {
+                           e.preventDefault();
+                           table.rows({ search: 'applied'}).deselect();
+                           table.rows({ search: 'applied'}).select();
+                       }
+                   
+                   },
+                                      {
+                                          extend: 'selectAll',
+                                          className: 'selectall',
+                                          text:'Select Page',
+                                          action: function (e) {
+                                              e.preventDefault();
+                                              table.rows({ search: 'applied' }).deselect();
+                                              table.rows({ page: 'current' }).select();
+                                          }
+
+                                      },
+
+                'selectNone',
+                {
+                    extend : 'selected',
+                    text: 'Backout',
+                    action: function (e, dt, button, config) {
+                        //     alert(dt.rows({ selected: true }).indexes().length + ' row(s) selected');
+                        var rowData = dt.rows({ selected: true }).data();
+
+                        $.each($(rowData), function (key, value) {
+                            console.log(value);
+                            var url = "Backout/" + value[0];
+                            var method = "PUT";
+                            var postData = value[0];
+                            var async = false;
+
+                            console.log(url);
+
+                            var xmlHttp = new XMLHttpRequest();
+                            xmlHttp.onreadystatechange = function () {
+                                if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                                    //   callback(xmlHttp.responseText);
+                                  
+                                    ;
+                            }
+                            xmlHttp.open("GET", url, true); // true for asynchronous 
+                            xmlHttp.send(null);
+                        //    location.reload();
+
+                        });
+
+                    }
+                }
+               
             ]
             
            

@@ -16,6 +16,8 @@
           <Property Name="CreatedOn" Type="datetime" />
           <Property Name="SupplierCode" Type="varchar" MaxLength="4" />
           <Property Name="FullName" Type="varchar" MaxLength="50" />
+          <Property Name="LastPasswordChange" Type="datetime" />
+          <Property Name="AdminLevel" Type="int" />
         </EntityType>
         <Function Name="createSuperUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CurrentUserID" Type="int" Mode="In" />
@@ -24,7 +26,7 @@
           <Parameter Name="ErrorMessage" Type="varchar(max)" Mode="InOut" />
         </Function>
         <Function Name="getOrderStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="SupplierCode" Type="varchar" Mode="In" />
+          <Parameter Name="hash" Type="varchar" Mode="In" />
           <Parameter Name="OrderStatus" Type="varchar" Mode="In" />
           <Parameter Name="Count" Type="int" Mode="InOut" />
           <Parameter Name="ReturnCode" Type="int" Mode="InOut" />
@@ -38,13 +40,23 @@
           <Parameter Name="password" Type="varchar" Mode="In" />
           <Parameter Name="Supplier" Type="varchar" Mode="In" />
           <Parameter Name="token" Type="varchar" Mode="InOut" />
+          <Parameter Name="ipaddress" Type="varchar" Mode="In" />
+          <Parameter Name="change" Type="char" Mode="InOut" />
         </Function>
         <Function Name="setPassword" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="UserID" Type="bigint" Mode="In" />
           <Parameter Name="Password" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="tp_BackoutOrder" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="hash" Type="varchar" Mode="In" />
+          <Parameter Name="OrderID" Type="bigint" Mode="In" />
+        </Function>
         <Function Name="tp_getSummary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="SupplierCode" Type="varchar" Mode="In" />
+          <Parameter Name="hash" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="tp_updateOrder" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="hash" Type="varchar" Mode="In" />
+          <Parameter Name="OrderID" Type="bigint" Mode="In" />
         </Function>
         <Function Name="usr_addUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="UserID" Type="bigint" Mode="In" />
@@ -87,6 +99,8 @@
           <Property Name="CreatedOn" Type="DateTime" Precision="3" />
           <Property Name="SupplierCode" Type="String" MaxLength="4" FixedLength="false" Unicode="false" />
           <Property Name="FullName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LastPasswordChange" Type="DateTime" Precision="3" />
+          <Property Name="AdminLevel" Type="Int32" />
         </EntityType>
         <EntityContainer Name="DDTrack_SandBoxEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Users" EntityType="Self.User" />
@@ -95,12 +109,14 @@
             <Parameter Name="password" Mode="In" Type="String" />
             <Parameter Name="Supplier" Mode="In" Type="String" />
             <Parameter Name="token" Mode="InOut" Type="String" />
+            <Parameter Name="ipaddress" Mode="In" Type="String" />
+            <Parameter Name="change" Mode="InOut" Type="String" />
           </FunctionImport>
           <FunctionImport Name="tp_getSummary" ReturnType="Collection(DDTrack_SandBoxModel.tp_getSummary_Result)">
-          <Parameter Name="SupplierCode" Mode="In" Type="String" />
+          <Parameter Name="hash" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="getOrderStatus" ReturnType="Collection(DDTrack_SandBoxModel.getOrderStatus_Result)">
-            <Parameter Name="SupplierCode" Mode="In" Type="String" />
+            <Parameter Name="hash" Mode="In" Type="String" />
             <Parameter Name="OrderStatus" Mode="In" Type="String" />
             <Parameter Name="Count" Mode="InOut" Type="Int32" />
             <Parameter Name="ReturnCode" Mode="InOut" Type="Int32" />
@@ -142,25 +158,33 @@
             <Parameter Name="UserID" Mode="In" Type="Int64" />
             <Parameter Name="Password" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="tp_updateOrder">
+            <Parameter Name="hash" Mode="In" Type="String" />
+            <Parameter Name="OrderID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="tp_BackoutOrder">
+            <Parameter Name="hash" Mode="In" Type="String" />
+            <Parameter Name="OrderID" Mode="In" Type="Int64" />
+          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="tp_getSummary_Result">
-          <Property Type="String" Name="UserStatusText" Nullable="true" MaxLength="150" />
           <Property Type="Int32" Name="Records" Nullable="true" />
-          <Property Type="String" Name="OrderStatusCode" Nullable="true" MaxLength="2" />
+          <Property Type="String" Name="OrderStatusCode" Nullable="true" MaxLength="4" />
+          <Property Type="String" Name="Order_Status" Nullable="true" MaxLength="150" />
         </ComplexType>
         <ComplexType Name="getOrderStatus_Result">
-          <Property Type="String" Name="AccountNumber" Nullable="false" MaxLength="20" />
-          <Property Type="String" Name="CustomerName" Nullable="false" MaxLength="100" />
-          <Property Type="String" Name="SupplierCode" Nullable="false" MaxLength="4" />
-          <Property Type="String" Name="ItemNumber" Nullable="false" MaxLength="10" />
+          <Property Type="String" Name="AccountNumber" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="CustomerName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="SupplierCode" Nullable="true" MaxLength="4" />
+          <Property Type="String" Name="ItemNumber" Nullable="true" MaxLength="10" />
           <Property Type="String" Name="ItemDescription" Nullable="true" MaxLength="20" />
-          <Property Type="String" Name="OptionNumber" Nullable="false" MaxLength="2" />
+          <Property Type="String" Name="OptionNumber" Nullable="true" MaxLength="2" />
           <Property Type="String" Name="OptionDescription" Nullable="true" MaxLength="10" />
-          <Property Type="DateTime" Name="StatusTime" Nullable="false" Precision="23" />
+          <Property Type="DateTime" Name="StatusTime" Nullable="true" Precision="23" />
           <Property Type="String" Name="UserStatusText" Nullable="true" MaxLength="150" />
           <Property Type="String" Name="InvoiceNumber" Nullable="true" MaxLength="10" />
-          <Property Type="String" Name="OrderStatusCode" Nullable="true" MaxLength="2" />
-          <Property Type="Int64" Name="OrderID" Nullable="false" />
+          <Property Type="String" Name="OrderStatusCode" Nullable="true" MaxLength="4" />
+          <Property Type="Int64" Name="OrderID" Nullable="true" />
           <Property Type="Int32" Name="DisplayOrder" Nullable="true" />
         </ComplexType>
         <ComplexType Name="getUserDetails_Result">
@@ -169,6 +193,8 @@
           <Property Type="String" Name="FullName" Nullable="true" MaxLength="50" />
           <Property Type="String" Name="SupplierName" Nullable="true" MaxLength="150" />
           <Property Type="Int64" Name="UserID" Nullable="false" />
+          <Property Type="Int32" Name="AdminLevel" Nullable="true" />
+          <Property Type="String" Name="AdminLevelName" Nullable="true" MaxLength="150" />
         </ComplexType>
         <ComplexType Name="usr_getUser_Result">
           <Property Type="Int64" Name="UserID" Nullable="false" />
@@ -178,6 +204,9 @@
           <Property Type="DateTime" Name="CreatedOn" Nullable="true" Precision="23" />
           <Property Type="String" Name="SupplierCode" Nullable="true" MaxLength="4" />
           <Property Type="String" Name="FullName" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="LastPasswordChange" Nullable="true" Precision="23" />
+          <Property Type="Int32" Name="AdminLevel" Nullable="true" />
+          <Property Type="String" Name="AdminLevelName" Nullable="true" MaxLength="150" />
         </ComplexType>
         <ComplexType Name="usr_getUsers_Result">
           <Property Type="Int64" Name="UserID" Nullable="false" />
@@ -187,6 +216,8 @@
           <Property Type="DateTime" Name="CreatedOn" Nullable="true" Precision="23" />
           <Property Type="String" Name="SupplierCode" Nullable="true" MaxLength="4" />
           <Property Type="String" Name="FullName" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="LastPasswordChange" Nullable="true" Precision="23" />
+          <Property Type="Int32" Name="AdminLevel" Nullable="true" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -197,6 +228,8 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="DDTrack_SandBoxModel.User">
               <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="AdminLevel" ColumnName="AdminLevel" />
+                <ScalarProperty Name="LastPasswordChange" ColumnName="LastPasswordChange" />
                 <ScalarProperty Name="FullName" ColumnName="FullName" />
                 <ScalarProperty Name="SupplierCode" ColumnName="SupplierCode" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
@@ -211,9 +244,9 @@
           <FunctionImportMapping FunctionImportName="tp_getSummary" FunctionName="DDTrack_SandBoxModel.Store.tp_getSummary">
             <ResultMapping>
               <ComplexTypeMapping TypeName="DDTrack_SandBoxModel.tp_getSummary_Result">
-                <ScalarProperty Name="UserStatusText" ColumnName="UserStatusText" />
                 <ScalarProperty Name="Records" ColumnName="Records" />
                 <ScalarProperty Name="OrderStatusCode" ColumnName="OrderStatusCode" />
+                <ScalarProperty Name="Order_Status" ColumnName="Order Status" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -244,6 +277,8 @@
                 <ScalarProperty Name="FullName" ColumnName="FullName" />
                 <ScalarProperty Name="SupplierName" ColumnName="SupplierName" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="AdminLevel" ColumnName="AdminLevel" />
+                <ScalarProperty Name="AdminLevelName" ColumnName="AdminLevelName" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -259,6 +294,9 @@
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="SupplierCode" ColumnName="SupplierCode" />
                 <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="LastPasswordChange" ColumnName="LastPasswordChange" />
+                <ScalarProperty Name="AdminLevel" ColumnName="AdminLevel" />
+                <ScalarProperty Name="AdminLevelName" ColumnName="AdminLevelName" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -272,11 +310,15 @@
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="SupplierCode" ColumnName="SupplierCode" />
                 <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="LastPasswordChange" ColumnName="LastPasswordChange" />
+                <ScalarProperty Name="AdminLevel" ColumnName="AdminLevel" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="usr_updateUser" FunctionName="DDTrack_SandBoxModel.Store.usr_updateUser" />
           <FunctionImportMapping FunctionImportName="setPassword" FunctionName="DDTrack_SandBoxModel.Store.setPassword" />
+          <FunctionImportMapping FunctionImportName="tp_updateOrder" FunctionName="DDTrack_SandBoxModel.Store.tp_updateOrder" />
+          <FunctionImportMapping FunctionImportName="tp_BackoutOrder" FunctionName="DDTrack_SandBoxModel.Store.tp_BackoutOrder" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
